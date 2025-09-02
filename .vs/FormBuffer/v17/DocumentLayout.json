@@ -1,0 +1,111 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "G:\\Formbuffer\\FormBuffer\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|g:\\formbuffer\\formbuffer\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|g:\\formbuffer\\formbuffer\\form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|solutionrelative:form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|g:\\formbuffer\\formbuffer\\form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|solutionrelative:form2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|g:\\formbuffer\\formbuffer\\noflashloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|solutionrelative:noflashloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|g:\\formbuffer\\formbuffer\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{B96A74D1-BA06-46D0-9F2C-61918CEB9280}|FormBuffer.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form2.cs",
+              "DocumentMoniker": "G:\\Formbuffer\\FormBuffer\\Form2.cs",
+              "RelativeDocumentMoniker": "Form2.cs",
+              "ToolTip": "G:\\Formbuffer\\FormBuffer\\Form2.cs",
+              "RelativeToolTip": "Form2.cs",
+              "ViewState": "AQIAABIAAAAAAAAAAAAmwCMAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T03:27:20.478Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "NoFlashLoader.cs",
+              "DocumentMoniker": "G:\\Formbuffer\\FormBuffer\\NoFlashLoader.cs",
+              "RelativeDocumentMoniker": "NoFlashLoader.cs",
+              "ToolTip": "G:\\Formbuffer\\FormBuffer\\NoFlashLoader.cs",
+              "RelativeToolTip": "NoFlashLoader.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T03:26:22.279Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "G:\\Formbuffer\\FormBuffer\\Form1.cs",
+              "RelativeDocumentMoniker": "Form1.cs",
+              "ToolTip": "G:\\Formbuffer\\FormBuffer\\Form1.cs",
+              "RelativeToolTip": "Form1.cs",
+              "ViewState": "AQIAAAEAAAAAAAAAAAAywBEAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T03:25:30.3Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Form2.cs [\u8BBE\u8BA1]",
+              "DocumentMoniker": "G:\\Formbuffer\\FormBuffer\\Form2.cs",
+              "RelativeDocumentMoniker": "Form2.cs",
+              "ToolTip": "G:\\Formbuffer\\FormBuffer\\Form2.cs [\u8BBE\u8BA1]",
+              "RelativeToolTip": "Form2.cs [\u8BBE\u8BA1]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T03:24:49.994Z",
+              "EditorCaption": " [\u8BBE\u8BA1]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Form1.cs [\u8BBE\u8BA1]",
+              "DocumentMoniker": "G:\\Formbuffer\\FormBuffer\\Form1.cs",
+              "RelativeDocumentMoniker": "Form1.cs",
+              "ToolTip": "G:\\Formbuffer\\FormBuffer\\Form1.cs [\u8BBE\u8BA1]",
+              "RelativeToolTip": "Form1.cs [\u8BBE\u8BA1]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-02T03:18:35.028Z",
+              "EditorCaption": " [\u8BBE\u8BA1]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

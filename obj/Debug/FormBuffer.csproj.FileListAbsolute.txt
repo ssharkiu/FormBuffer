@@ -1,0 +1,11 @@
+G:\Formbuffer\FormBuffer\bin\Debug\FormBuffer.exe.config
+G:\Formbuffer\FormBuffer\bin\Debug\FormBuffer.exe
+G:\Formbuffer\FormBuffer\bin\Debug\FormBuffer.pdb
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.csproj.AssemblyReference.cache
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.Form1.resources
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.Properties.Resources.resources
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.csproj.GenerateResource.cache
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.csproj.CoreCompileInputs.cache
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.exe
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.pdb
+G:\Formbuffer\FormBuffer\obj\Debug\FormBuffer.Form2.resources
