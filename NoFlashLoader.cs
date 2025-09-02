@@ -5,59 +5,52 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace FormBuffer // 按需改成你的命名空间
+namespace FormBuffer // (按需改成你的命名空间)
 {
     public static class NoFlashLoader
     {
-        // (新增内容B) 反射句柄：访问受保护成员
+        // (新增内容B) 反射访问受保护成员
         private static readonly MethodInfo SetStyleMethod =
             typeof(Control).GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly PropertyInfo DoubleBufferedProp =
             typeof(Control).GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        /// <summary>
-        /// (新增内容B) 为任意 Form 启用“无闪屏加载”
-        /// </summary>
-        /// <param name="form">目标窗体（不需要继承自任何特殊基类）</param>
-        /// <param name="initAsync">可选：耗时初始化逻辑（IO/数据库/设备/网络等）——放后台执行</param>
-        /// <param name="afterInitUI">可选：初始化完成后在 UI 线程执行的 UI 绑定逻辑</param>
-        /// <param name="fadeIn">是否淡入呈现</param>
-        /// <param name="fadeDurationMs">淡入时长（毫秒），0 则瞬时显示</param>
-        /// <param name="applyAggressive">是否尽量开启控件的双缓冲/用户绘制等样式</param>
-        /// <param name="enableRecursiveBuffer">是否对所有子控件递归开启双缓冲</param>
+        // =====================================================================
+        // 方案一：标准附着（含 Opacity，支持淡入）。无透明控件时推荐。
+        // 注意：Opacity 会让窗体成为 Layered Window，可能破坏“伪透明”控件背景。
+        // =====================================================================
         public static void Attach(
             Form form,
-            Func<Task> initAsync = null,
-            Action afterInitUI = null,
-            bool fadeIn = true,
-            int fadeDurationMs = 120,
-            bool applyAggressive = true,
-            bool enableRecursiveBuffer = true
+            Func<Task> initAsync = null,     // (新增内容B) 后台初始化（IO/DB/设备/网络等）
+            Action afterInitUI = null,       // (新增内容B) 初始化完成后的 UI 线程绑定/刷新
+            bool fadeIn = true,              // (新增内容B) 是否淡入呈现
+            int fadeDurationMs = 120,        // (新增内容B) 淡入时长（毫秒），0=瞬时
+            bool applyAggressive = true,     // (新增内容B) 是否尽量开启样式优化（双缓冲等）
+            bool enableRecursiveBuffer = true// (新增内容B) 是否递归对子控件开启双缓冲
         )
         {
-            if (form == null) throw new ArgumentNullException(nameof(form));
+            if (form == null) throw new ArgumentNullException("form");
 
-            // (新增内容B) 尽早透明，避免创建到首帧之间的“黑/白闪”
+            // (新增内容B) 启动透明，避免创建到首帧之间的“黑/白闪”
             TrySetOpacity(form, 0.0);
 
-            // (新增内容B) 可选：统一样式（不覆写基类，仅用反射调用 SetStyle/DoubleBuffered）
             if (applyAggressive)
             {
                 TrySetStyle(form, ControlStyles.OptimizedDoubleBuffer, true);
                 TrySetStyle(form, ControlStyles.AllPaintingInWmPaint, true);
                 TrySetStyle(form, ControlStyles.ResizeRedraw, true);
-                TrySetStyle(form, ControlStyles.UserPaint, true); // 尽量减少背景擦除
+                TrySetStyle(form, ControlStyles.UserPaint, true); // (新增内容B) 减少背景擦除（注意：可能影响透明）
                 TrySetDoubleBuffered(form, true);
 
                 if (enableRecursiveBuffer)
                     EnableDoubleBufferRecursive(form);
             }
 
-            // (新增内容B) 在 HandleCreated/Shown 时机再兜底透明一次，避免外部先显示造成的闪烁
-            form.HandleCreated += (_, __) => { TrySetOpacity(form, 0.0); };
+            // (新增内容B) 兜底：有些场景外部可能提前 Show，这里再拉回透明
+            form.HandleCreated += delegate { TrySetOpacity(form, 0.0); };
 
             bool initialized = false;
-            form.Shown += async (_, __) =>
+            form.Shown += async delegate
             {
                 if (initialized) return;
                 initialized = true;
@@ -65,31 +58,29 @@ namespace FormBuffer // 按需改成你的命名空间
                 form.SuspendLayout();
                 try
                 {
-                    // (新增内容B) 后台初始化：避免阻塞 UI 线程导致的背景重绘
                     if (initAsync != null)
-                        await initAsync();
+                        await initAsync();     // (新增内容B) 后台初始化
 
-                    // (新增内容B) 初始化完成后在 UI 线程做数据绑定/控件刷新
-                    afterInitUI?.Invoke();
-
-                    // (新增内容B) 一次性呈现（可淡入）
-                    if (fadeIn && fadeDurationMs > 0)
-                        await FadeToAsync(form, 1.0, fadeDurationMs);
-                    else
-                        TrySetOpacity(form, 1.0);
+                    if (afterInitUI != null)
+                        afterInitUI();         // (新增内容B) UI 绑定/刷新
                 }
                 finally
                 {
-                    form.ResumeLayout(performLayout: true);
+                    form.ResumeLayout(true);
                 }
+
+                // (新增内容B) 最终呈现：可淡入或瞬显
+                if (fadeIn && fadeDurationMs > 0)
+                    await FadeToAsync(form, 1.0, fadeDurationMs);
+                else
+                    TrySetOpacity(form, 1.0);
             };
 
-            // (新增内容B) 兜底：在 Load 时也强制透明，防止第三方框架提前 Show()
-            form.Load += (_, __) => { TrySetOpacity(form, 0.0); };
+            // (新增内容B) 用于一些第三方框架先触发 Load 的场景，保证仍然透明
+            form.Load += delegate { TrySetOpacity(form, 0.0); };
 
-            // (可选，新增内容B) 使用 Paint 统一填充背景，弱化白底擦除的观感
-            // 说明：我们不能覆写 OnPaintBackground，但可以在首帧前保持透明 + Paint 填充背景色
-            form.Paint += (_, e) =>
+            // (可选，新增内容B) 在透明阶段的 Paint，尽量用 BackColor 填充，弱化白底观感
+            form.Paint += delegate (object sender, PaintEventArgs e)
             {
                 if (form.Opacity < 1.0)
                 {
@@ -101,31 +92,95 @@ namespace FormBuffer // 按需改成你的命名空间
             };
         }
 
-        // ---------------- 辅助函数：不改继承也能做到“尽可能防闪” ----------------
+        // ========================================================================================
+        // 方案二：透明友好附着（不使用 Opacity，不设置 UserPaint），适合有 Transparent 背景控件。
+        // 实现方式：启动时隐藏 → 后台初始化 → UI 绑定 → 一次性 Show()（无分层窗口）
+        // ========================================================================================
+        public static void AttachTransparentFriendly(
+            Form form,
+            Func<Task> initAsync = null,     // (新增内容B) 后台初始化（IO/DB/设备/网络等）
+            Action afterInitUI = null,       // (新增内容B) 初始化完成后的 UI 线程绑定/刷新
+            bool applyDoubleBuffer = true    // (新增内容B) 递归对子控件启用双缓冲（不影响透明链路）
+        )
+        {
+            if (form == null) throw new ArgumentNullException("form");
+
+            // (新增内容B) 不用 Opacity，直接隐藏，避免分层窗口破坏“伪透明”
+            form.Visible = false;
+
+            if (applyDoubleBuffer)
+            {
+                TrySetStyle(form, ControlStyles.OptimizedDoubleBuffer, true);
+                TrySetStyle(form, ControlStyles.AllPaintingInWmPaint, true);
+                TrySetStyle(form, ControlStyles.ResizeRedraw, true);
+                // (注释内容B) 不设置 UserPaint，避免破坏透明父容器的代绘机制
+                TrySetDoubleBuffered(form, true);
+                EnableDoubleBufferRecursive(form);
+            }
+
+            bool initialized = false;
+            form.Load += async delegate
+            {
+                if (initialized) return;
+                initialized = true;
+
+                form.SuspendLayout();
+                try
+                {
+                    if (initAsync != null)
+                        await initAsync();   // (新增内容B) 后台初始化
+
+                    if (afterInitUI != null)
+                        afterInitUI();       // (新增内容B) UI 绑定/刷新
+                }
+                finally
+                {
+                    form.ResumeLayout(true);
+                }
+
+                // (新增内容B) 一次性显示（非分层，无淡入，透明控件安全）
+                form.Show();
+            };
+        }
+
+        // ------------------------------ 公共小工具 ------------------------------
 
         private static void TrySetStyle(Control c, ControlStyles style, bool value)
         {
-            try { SetStyleMethod?.Invoke(c, new object[] { style, value }); } catch { /* 忽略 */ }
+            try
+            {
+                if (SetStyleMethod != null)
+                    SetStyleMethod.Invoke(c, new object[] { style, value });
+            }
+            catch { /* 忽略 */ }
         }
 
         private static void TrySetDoubleBuffered(Control c, bool value)
         {
-            try { DoubleBufferedProp?.SetValue(c, value, null); } catch { /* 忽略 */ }
+            try
+            {
+                if (DoubleBufferedProp != null)
+                    DoubleBufferedProp.SetValue(c, value, null);
+            }
+            catch { /* 忽略 */ }
         }
 
         private static void TrySetOpacity(Form f, double v)
         {
             try
             {
-                v = Math.Max(0.0, Math.Min(1.0, v));
+                if (v < 0.0) v = 0.0;
+                if (v > 1.0) v = 1.0;
                 f.Opacity = v;
             }
-            catch { /* 某些远程/嵌入场景不支持透明，不致命 */ }
+            catch { /* 某些嵌入/远程场景可能不支持透明，不致命 */ }
         }
 
         private static async Task FadeToAsync(Form form, double target, int durationMs)
         {
-            target = Math.Max(0.0, Math.Min(1.0, target));
+            if (target < 0.0) target = 0.0;
+            if (target > 1.0) target = 1.0;
+
             if (durationMs <= 0)
             {
                 TrySetOpacity(form, target);
@@ -133,30 +188,31 @@ namespace FormBuffer // 按需改成你的命名空间
             }
 
             const int steps = 12;
-            int interval = Math.Max(8, durationMs / steps);
-            double start = form.Opacity;
+            int interval = durationMs / steps;
+            if (interval < 8) interval = 8;
 
-            for (int i = 1; i <= steps; i++)
+            double start = form.Opacity;
+            int i;
+            for (i = 1; i <= steps; i++)
             {
-                TrySetOpacity(form, start + (target - start) * i / steps);
+                double v = start + (target - start) * i / (double)steps;
+                TrySetOpacity(form, v);
                 await Task.Delay(interval);
             }
             TrySetOpacity(form, target);
         }
 
         /// <summary>
-        /// (新增内容B) 递归开启所有子控件的双缓冲（对 DataGridView/Panel/TreeView 等效果明显）
+        /// (新增内容B) 递归开启所有子控件的双缓冲（对 DataGridView/Panel/TreeView 等效果明显）。
         /// </summary>
         public static void EnableDoubleBufferRecursive(Control root)
         {
             if (root == null) return;
 
-            // 当前节点
             TrySetDoubleBuffered(root, true);
             TrySetStyle(root, ControlStyles.OptimizedDoubleBuffer, true);
             TrySetStyle(root, ControlStyles.AllPaintingInWmPaint, true);
 
-            // 子节点
             foreach (Control child in root.Controls)
                 EnableDoubleBufferRecursive(child);
         }
